@@ -59,7 +59,17 @@ public class FreezingGeneric
             string fileName = Path.GetFileNameWithoutExtension(files[i]);
             //ファイルの番号を取得する(拡張子の部分)
             string fileNumberString = Path.GetExtension(files[i]).Replace(".", "");
-            long fileNumber = long.Parse(fileNumberString);
+            long fileNumber;
+            try
+            {
+                fileNumber = long.Parse(fileNumberString);
+            }
+            catch 
+            {
+                //拡張子が数字ではなかった場合
+                errorFilesList.Add(files[i]);
+                continue;
+            }
 
             //ファイル名が異なっていた場合
             if(fileName != usedDLData.FileName)
