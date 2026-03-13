@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -85,6 +86,14 @@ public class FileSpliting
         using (FileStream dlDataFs = new FileStream(dlDataPath, FileMode.Create, FileAccess.Write))
         {
             dlDataFs.Write(createdDLData.ReturnByteData());
+        }
+
+        //全てのデータが揃っているか確認しておく
+        MistakeFiles mistakeFiles = new FreezingGeneric().hasAllRequiredData(saveinPath);
+        if(mistakeFiles.LackFiles.Count != 0)
+        {
+            Debug.Log("ファイルの分割に失敗しました");
+            throw new Exception();
         }
 
         //zipファイルを削除する
