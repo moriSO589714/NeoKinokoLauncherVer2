@@ -13,8 +13,8 @@ public class test : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        List<GameData> gameDatas = new JSONandGameDataChanger().JSONDirPathToGameData(path);
-
+        new LoadFreedamDir().SetFreedamDirByJson();
+        DirPathsSingleton directoryPaths = new DirPathsSingleton();
         Debug.Log("End");
     }
 

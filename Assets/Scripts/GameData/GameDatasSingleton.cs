@@ -14,5 +14,9 @@ public class GameDatasSingleton : BasedSingleton<GameDatasSingleton>
     {
         GameDatas.Add(gameData);
     }
+    public void AddGameDataList(List<GameData> gameDatas)
+    {
+        GameDatas.AddRange(gameDatas);
+    }
 }
 

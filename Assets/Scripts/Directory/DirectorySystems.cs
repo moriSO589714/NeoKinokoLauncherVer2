@@ -11,7 +11,7 @@ public class DirectorySystems : MonoBehaviour
     //ディレクトリが存在するかの確認と生成されていないなら生成
     public async UniTask CheckDirectory()
     {
-        DirectoryPaths _directoryPaths = new DirectoryPaths();
+        DirPathsSingleton _directoryPaths = new DirPathsSingleton();
         string _baseDirectory = _directoryPaths.BaseDirectory;
         string _gameFilePath = _baseDirectory +"/"+ _directoryPaths.GameFilePath;
         string _jsonFolderPath = _baseDirectory +"/"+ _directoryPaths.JsonFolderPath;

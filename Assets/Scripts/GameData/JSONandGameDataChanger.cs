@@ -49,7 +49,7 @@ public class JSONandGameDataChanger
         {
             try
             {
-                gameDatas.Add(JSONtoGameData(jsf));
+                gameDatas.Add(new JSONTools().ReadJSON<GameData>(jsf));
             }
             catch(Exception e)
             {
@@ -58,21 +58,5 @@ public class JSONandGameDataChanger
         }
 
         return gameDatas;
-    }
-
-    /// <summary>
-    /// JSONファイルのパスからGameDataクラスへデータを代入するクラス
-    /// </summary>
-    /// <param name="jsonFilePath">jsonファイルのパス</param>
-    /// <returns>GameDataクラス(単体)</returns>
-    public GameData JSONtoGameData(string jsonFilePath)
-    {
-        //JsonUtilityを利用するために、jsonファイルを読み込んでstring型にする必要がある
-        string jsonData = new JSONTools().ReadJSON(jsonFilePath);
-        //UnityのJsonUtilityを利用してJSON形式のデータをGameDataクラスに代入する
-        //JSONデータに不足がある場合、gameDataの各変数にはnullが入る
-        //逆にGameDataクラス側に不足がある場合は代入は行われない -> GameDataの変数項目に追加が合った場合でも下位互換が可能
-        GameData gameData = JsonUtility.FromJson<GameData>(jsonData);
-        return gameData;
     }
 }
