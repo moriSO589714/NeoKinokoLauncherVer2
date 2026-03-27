@@ -13,8 +13,8 @@ public class test : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        new LoadFreedamDir().SetFreedamDirByJson();
-        DirPathsSingleton directoryPaths = new DirPathsSingleton();
+        new LoadFlexibleDir().SetFlexibleDirByJson();
+        AllDirs directoryPaths = new AllDirs();
         Debug.Log("End");
     }
 

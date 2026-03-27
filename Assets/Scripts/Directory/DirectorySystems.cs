@@ -11,10 +11,10 @@ public class DirectorySystems : MonoBehaviour
     //ディレクトリが存在するかの確認と生成されていないなら生成
     public async UniTask CheckDirectory()
     {
-        DirPathsSingleton _directoryPaths = new DirPathsSingleton();
+        AllDirs _directoryPaths = new AllDirs();
         string _baseDirectory = _directoryPaths.BaseDirectory;
         string _gameFilePath = _baseDirectory +"/"+ _directoryPaths.GameFilePath;
-        string _jsonFolderPath = _baseDirectory +"/"+ _directoryPaths.JsonFolderPath;
+        string _jsonFolderPath = _baseDirectory +"/"+ _directoryPaths.JsonsDirPath;
         string _imageFolderPath = _baseDirectory +"/"+ _directoryPaths.ImageFolderPath;
     }
 
