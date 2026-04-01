@@ -47,14 +47,24 @@ public class JSONandGameDataChanger
         List<GameData> gameDatas = new List<GameData>();
         foreach(string jsf in targetJSONs)
         {
+            GameData gameData = null;
             try
             {
-                gameDatas.Add(new JSONTools().ReadJSON<GameData>(jsf));
+                gameData = new JSONTools().ReadJSON<GameData>(jsf);
             }
             catch(Exception e)
             {
                 Debug.Log("jsonファイルからGameDataへの変換に失敗しました。FILEPATH:" + jsf + "ERROR>>" + e);
             }
+
+
+            //GameDataクラスが最低要件を満たしているかを確認する。(ゲームの実行ファイル名とフォルダ名)
+            if (gameData.GameExeName == null || gameData.GameDirName == null)
+            {
+                continue;
+            }
+
+            if (gameData != null)gameDatas.Add(gameData);
         }
 
         return gameDatas;

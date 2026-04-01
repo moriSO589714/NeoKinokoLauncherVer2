@@ -1,6 +1,6 @@
 {
   "BaseDirectory": "",
-  "GameFilePath": "",
-  "JsonFolderPath": "C:/Users/souza/Downloads/jsonParty",
+  "GameFilePath": "C:/Users/souza/Downloads/ForKiokoGameDatas",
+  "JsonsDirPath": "C:/Users/souza/Downloads/jsonParty",
   "ImageFolderPath": ""
 }

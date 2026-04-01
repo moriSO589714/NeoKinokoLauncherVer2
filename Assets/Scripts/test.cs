@@ -14,7 +14,7 @@ public class test : MonoBehaviour
     void Start()
     {
         new LoadFlexibleDir().SetFlexibleDirByJson();
-        AllDirs directoryPaths = new AllDirs();
+        new GameDataManager().OverallGameDataLoad();
         Debug.Log("End");
     }
 

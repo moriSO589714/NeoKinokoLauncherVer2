@@ -18,5 +18,11 @@ public class GameDatasSingleton : BasedSingleton<GameDatasSingleton>
     {
         GameDatas.AddRange(gameDatas);
     }
+
+    //リストのリセット
+    public void ResetGameDataList()
+    {
+        GameDatas = new List<GameData>();
+    }
 }
 
