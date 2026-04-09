@@ -25,15 +25,14 @@ public class FileSpliting
         try
         {
             //すでに圧縮された同名のファイルが存在した場合、そのファイルを削除する
-            if(File.Exists(tempFilePath)) File.Delete(tempFilePath);
+            if (File.Exists(tempFilePath)) File.Delete(tempFilePath);
 
             //shift_jisを指定して圧縮
             ZipFile.CreateFromDirectory(gameDataPath, tempFilePath, System.IO.Compression.CompressionLevel.Optimal, false, System.Text.Encoding.GetEncoding("shift_jis"));
         }
-        catch(System.Exception e) 
+        catch (Exception e)
         {
-            Debug.Log("ファイルの圧縮に失敗しました\rエラー内容＞＞＞" + e);
-            return null;
+            throw new Exception("failed to create zipFile from directory. Log>>>" + e);
         }
 
         return tempFilePath;
@@ -92,8 +91,7 @@ public class FileSpliting
         MistakeFiles mistakeFiles = new FreezingTools().hasAllRequiredData(saveinPath);
         if(mistakeFiles.LackFiles.Count != 0)
         {
-            Debug.Log("ファイルの分割に失敗しました");
-            throw new Exception();
+            throw new Exception("failed to divide zip file, because there are missing files");
         }
 
         //zipファイルを削除する

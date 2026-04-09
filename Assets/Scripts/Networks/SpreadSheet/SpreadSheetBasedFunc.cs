@@ -59,7 +59,7 @@ public class SpreadSheetBasedFunc
         catch(Exception e)
         {
             Debug.Log(e);
-            return null;
+            throw new Exception("failed to connect with SpreadSheet. Log>>>" + e);
         }
 
         return returnValues;

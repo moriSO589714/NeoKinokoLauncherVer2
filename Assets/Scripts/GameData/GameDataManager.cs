@@ -26,7 +26,7 @@ public class GameDataManager
         string jsonsDirPath = allDirs.JsonsDirPath;
         if(jsonsDirPath == null)
         {
-            throw new System.Exception("jsonファイルが入ったフォルダのパスを取得できません。");
+            throw new System.Exception("cannot get the path to the folder containing the JSON file");
         }
         //ゲームデータクラスのリスト化
         List<GameData> gameDatas = new JSONandGameDataChanger().JSONDirPathToGameData(jsonsDirPath);

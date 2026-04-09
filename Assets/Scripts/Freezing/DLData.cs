@@ -85,6 +85,7 @@ public class DLData
     {
         string toByteData = GameSize.ToString() + "," + FileName + "," + SplitedFileNum.ToString();
         byte[] byteData = System.Text.Encoding.UTF8.GetBytes(toByteData);
+        if (byteData == null) throw new Exception("converted byteArray is null.");
         return byteData;
     }
 

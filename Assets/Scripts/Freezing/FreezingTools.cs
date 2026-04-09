@@ -38,12 +38,12 @@ public class FreezingTools
         if(dLDataFiles.Count() > 1)
         {
             UnityEngine.Debug.Log("DLDataファイルが複数存在します。" + dLDataFiles.Count());
-            throw new Exception();
+            throw new Exception("failed to check. DLDataFile is not only. DLDataCount>>>" + dLDataFiles.Count());
         }
         else if(dLDataFiles.Count() == 0)
         {
-            UnityEngine.Debug.Log("DLDataファイルが存在しません");
-            throw new Exception();
+            UnityEngine.Debug.Log("failed to check. DLDataFile does not exist");
+            throw new Exception("failed to check. DLDataFile does not exist");
         }
 
         //ファイルチェック時に使用するゲーム名を格納するためのDLDataクラスを作成して、.00ファイルのバイト配列からデータを入れる。
