@@ -2,7 +2,7 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
-#ŠO•”ƒAƒZƒbƒg‚ª“ü‚éƒfƒBƒŒƒNƒgƒŠ(AssetStoreTools)‚Æ‹@–§«‚Ì‚‚¢ƒf[ƒ^‚ª“ü‚Á‚Ä‚¢‚éƒfƒBƒŒƒNƒgƒŠ(DelicateDatas)‚ğ’Ç‹L
+#ï¿½Oï¿½ï¿½ï¿½Aï¿½Zï¿½bï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½fï¿½Bï¿½ï¿½ï¿½Nï¿½gï¿½ï¿½(AssetStoreTools)ï¿½Æ‹@ï¿½ï¿½ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½fï¿½[ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½fï¿½Bï¿½ï¿½ï¿½Nï¿½gï¿½ï¿½(DelicateDatas)ï¿½ï¿½Ç‹L
 .utmp/
 /[Ll]ibrary/
 /[Tt]emp/
@@ -104,3 +104,4 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+KinokinoAsobitai/path-to-key-json.json

@@ -15,4 +15,6 @@ public class FlexibleDirs
     public string JsonsDirPath;
     //イメージ写真が保存されるディレクトリ
     public string ImageFolderPath;
+    //スプレッドシートのID
+    public string SpreadSheetID;
 }
