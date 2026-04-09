@@ -31,7 +31,7 @@ public class SpreadSheetBased
     }
 
     /// <summary>
-    /// 指定のセルの値を取得して返す
+    /// 指定したセルの値を取得して返す
     /// </summary>
     /// <param name="startCellPosition">値を返す範囲の始めの(列,行)</param>
     /// <param name="endCellPosition">値を返す範囲の終わりの(列,行)</param>
@@ -46,6 +46,8 @@ public class SpreadSheetBased
         {
             ValueRange response = request.Execute();
             var values = response.Values;
+
+            if (values == null) return null;
             foreach(IList<object> list in values)
             {
                 List<string> strings = new List<string>();

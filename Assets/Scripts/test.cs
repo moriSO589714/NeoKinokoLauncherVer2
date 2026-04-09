@@ -16,10 +16,9 @@ public class test : MonoBehaviour
     void Start()
     {
         new EachDataLoad().LocalDataLoad();
-        DriveService driveService = new DriveBased().CreateDriveAPI(AllDirs.GetInstance().JsonPathKey);
         try
         {
-            new DriveBased().DownloadFromDrive(driveService, "1e0LSKmtMHu2jkT84DfbEKAIojIhcEFqL", "KinokinoAsobitai");
+            List<string> array = new SpreadSheetTools().GetElementTypeArray(AllDirs.GetInstance().JsonPathKey, AllDirs.GetInstance().SpreadSheetID);
         }
         catch (Exception e)
         {

@@ -21,7 +21,7 @@ public class GameData
     public string GameJsonName; //ゲームのjsonファイル名
     public string GameVersion; //ゲームのバージョン(2504011225の形)
     public string GameDescription; //ゲームの説明
-    public string GameDevelopper; //ゲームの作者
+    public string[] GameDevelopper; //ゲームの作者
     public string GameSoftwareType; //使われたゲーム開発環境
     public string GameDriveId; //ゲームのドライブID
     public string GameImageId; //ゲームのサムネのドライブID
