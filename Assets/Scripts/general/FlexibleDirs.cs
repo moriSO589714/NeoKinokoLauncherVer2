@@ -17,4 +17,6 @@ public class FlexibleDirs
     public string ImageFolderPath;
     //スプレッドシートのID
     public string SpreadSheetID;
+    //スプレッドシートでデータテーブルの範囲が始まるセルの場所(列,行)
+    public Vector2 SpreadSheetStartCellPos;
 }

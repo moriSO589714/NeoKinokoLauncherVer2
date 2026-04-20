@@ -6,6 +6,7 @@ using System.IO;
 using UnityEngine;
 using Google.Apis.Sheets.v4.Data;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class SpreadSheetBased
 {
@@ -59,6 +60,19 @@ public class SpreadSheetBased
                 }
                 returnValues.Add(strings);
             }
+
+            //spread sheet APIで無視される末尾の空セルを埋める(行方向のみ)
+            int columnLength = ((int)endCellPosition.x - (int)startCellPosition.x) + 1;
+            foreach(List<string> value in returnValues)
+            {
+                if(value.Count < columnLength)
+                {
+                    for(int i = 0; i < columnLength - value.Count; i++)
+                    {
+                        value.Add("");
+                    }
+                }
+            }
         }
         catch(Exception e)
         {
@@ -67,6 +81,28 @@ public class SpreadSheetBased
         }
 
         return returnValues;
+    }
+
+    /// <summary>
+    /// ２次元配列のリスト(ReturnSSValueで取得したセルバリュー)を座標をKeyにしたDictionaryに変換して返す
+    /// </summary>
+    /// <param name="wList"></param>
+    /// <returns>[セル座標(列,行),セルの値]のDictionary</returns>
+    public Dictionary<Vector2,string> ConvertWListintoDictionary(List<List<string>> wList)
+    {
+        Dictionary<Vector2,string> convertedDictionary = new Dictionary<Vector2,string>();
+        SpreadSheetTools spreadSheetTools = new SpreadSheetTools();
+        for(int i = 0; i < wList.Count; i++)
+        {
+            for(int i2 = 0; i2 < wList[i].Count; i2++)
+            {
+                //定数1を足しているのは、リストのindexが0で始まるため
+                Vector2 cellPos = new Vector2(spreadSheetTools.IndextoSSColumn(i2), spreadSheetTools.IndextoSSRow(i));
+                convertedDictionary[cellPos] = wList[i][i2];
+            }
+        }
+
+        return convertedDictionary;
     }
 
     /// <summary>

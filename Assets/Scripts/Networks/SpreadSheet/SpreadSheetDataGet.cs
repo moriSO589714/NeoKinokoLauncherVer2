@@ -16,7 +16,8 @@ public class SpreadSheetDataGet : SpreadSheetBased
     {
         SheetsService sheetService = CreateSSAPI(jsonKeyPath);
 
-        Vector2 targetPos = new Vector2(2, 2);
+        AllDirs allDirs = AllDirs.GetInstance();
+        Vector2 targetPos = new Vector2(allDirs.SpreadSheetStartCellPos.x, allDirs.SpreadSheetStartCellPos.y - 1);
         //ScrollCellValueSearchで得られたディクショナリ型のデータを要素のみを取り出してリストに入れる
         List<string> elementTypeArray = ScrollCellValueSearch(sheetService, sheetID, targetPos, false).Select(x => x.Value).ToList();
 
@@ -31,6 +32,7 @@ public class SpreadSheetDataGet : SpreadSheetBased
     /// <returns></returns>
     public List<GameData> GetGameDataOfSpreadSheet(GameData condition, string jsonKeyPath, string sheetID)
     {
+        AllDirs allDirs = AllDirs.GetInstance();
         //シートの最も上の行(C,*)から条件に合うものだけをゲームデータにして、配列に格納していく
 
         FieldInfo[] gameDataFields = typeof(GameData).GetFields();
@@ -57,33 +59,36 @@ public class SpreadSheetDataGet : SpreadSheetBased
 
         //ディクショナリの要素とスプレッドシートの要素名の列数を変換させる
         NetworksSingleton networksSingleton = NetworksSingleton.Instance;
-        List<string> sheetElementOrder = networksSingleton.GetElementOrder();
+        List<string> sheetElementOrder = networksSingleton.ReturnElementOrder();
 
         SheetsService sheetService = CreateSSAPI(jsonKeyPath);
 
-        Dictionary<int, string> rowNumAndConditions = new Dictionary<int, string>();
+        Dictionary<int, string> columnNumAndConditions = new Dictionary<int, string>();
         foreach (var conditions in conditionsDictionary)
         {
-            int rowOrder = sheetElementOrder.IndexOf(conditions.Key);
-            if (rowOrder == -1) continue;
-            //実際のスプレッドシートの列数に合わせるために整数2を足す
-            rowOrder += 2;
+            int columnOrder = sheetElementOrder.IndexOf(conditions.Key);
+            if (columnOrder == -1) continue;
+            //配列のindexは0から始まるので数字を正す
+            columnOrder = new SpreadSheetTools().IndextoSSColumn(columnOrder);
 
-            rowNumAndConditions[rowOrder] = conditions.Value;
+            columnNumAndConditions[columnOrder] = conditions.Value;
         }
 
         Dictionary<Vector2, string> clearConditions = new Dictionary<Vector2, string>();
+        int liminulColumns = networksSingleton.ReturnLiminalRow();
         //絞り込み条件が指定されている最初の列を探していって、条件にあうものがあればその他の条件も一致しているかを確認する
-        foreach (var dicValue in rowNumAndConditions)
+        foreach (var dicValue in columnNumAndConditions)
         {
-            Dictionary<Vector2, string> getSpreadSheetValue = ScrollCellValueSearch(sheetService, sheetID, new Vector2(dicValue.Key, 3), true);
+            List<List<string>> spreadSheetValue = ReturnSSValue(sheetService, sheetID, new Vector2(dicValue.Key, allDirs.SpreadSheetStartCellPos.y), new Vector2(dicValue.Key, liminulColumns));
+            Dictionary<Vector2, string> getSpreadSheetValue = ConvertWListintoDictionary(spreadSheetValue);
+
             clearConditions = getSpreadSheetValue.Where(x => CheckConditions(dicValue.Value, x.Value)).ToDictionary(x => x.Key, x => x.Value);
 
-            //他の全ての条件に適していないものを削除する
+            //他の条件に適していないものを削除する
             foreach (var clearDicValue in clearConditions)
             {
-                //他に設定されている条件があるなら、その条件に合っているかを確かめる
-                foreach (var conditions in rowNumAndConditions)
+                //他に設定されている条件があるか確認、その条件に合っているかを確かめる
+                foreach (var conditions in columnNumAndConditions)
                 {
                     if (conditions.Key == dicValue.Key) continue;
 
@@ -105,7 +110,7 @@ public class SpreadSheetDataGet : SpreadSheetBased
         foreach (var lastClearValue in clearConditions)
         {
             //そのゲームのデータをスプレッドシートから全て取得
-            List<List<string>> getedAllData = ReturnSSValue(sheetService, sheetID, new Vector2(2, lastClearValue.Key.y), new Vector2(sheetElementOrder.Count + 3, lastClearValue.Key.y));
+            List<List<string>> getedAllData = ReturnSSValue(sheetService, sheetID, new Vector2(allDirs.SpreadSheetStartCellPos.x, lastClearValue.Key.y), new Vector2(new SpreadSheetTools().IndextoSSColumn(sheetElementOrder.Count), lastClearValue.Key.y));
             //多次元配列のリストをstringのリストに変換
             List<string> getedAllDataArray = new List<string>(getedAllData[0]);
 

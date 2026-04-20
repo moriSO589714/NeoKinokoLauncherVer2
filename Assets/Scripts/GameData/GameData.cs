@@ -9,7 +9,7 @@ using UnityEngine;
 /// </summary>
 [Serializable]
 [System.Diagnostics.DebuggerDisplay(
-    "ゲームタイトル：{GameTitle}\nゲームのフォルダ名：{GameDirName}\nゲームの実行ファイルの名前：{GameExeName}\nゲームのjsonファイル名：{GameJsonName}\nゲームバージョン{GameVersion}" +
+    "ゲームタイトル：{GameTitle}\nゲームのフォルダ名：{GameDirName}\nゲームの実行ファイルの名前：{GameExeName}\nゲームの固有番号：{GameID}\nゲームバージョン{GameVersion}" +
     "\nゲームの説明：{GameDescription}\nゲームの作者：{GameDevelopper}\nゲームツール：{GameSoftwareType}\nゲームのDriveID：{GameDriveId}\nゲームのサムネ画像のDriveID：{GameImageId}" +
     "\nゲームに付与されているタグ：{GameTags}\nゲームの状態：{Status}"
     )]
@@ -18,7 +18,7 @@ public class GameData
     public string GameTitle; //ゲームのタイトル
     public string GameDirName; //ゲームのフォルダ名
     public string GameExeName; //ゲームの実行ファイルの名前
-    public string GameJsonName; //ゲームのjsonファイル名
+    public string GameID; //ゲームの固有番号
     public string GameVersion; //ゲームのバージョン(2504011225の形)
     public string GameDescription; //ゲームの説明
     public string[] GameDevelopper; //ゲームの作者
