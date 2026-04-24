@@ -16,7 +16,9 @@ using UnityEngine;
 public class GameData
 {
     public string GameTitle; //ゲームのタイトル
+    [MustItem]
     public string GameDirName; //ゲームのフォルダ名
+    [MustItem]
     public string GameExeName; //ゲームの実行ファイルの名前
     public string GameID; //ゲームの固有番号
     public string GameVersion; //ゲームのバージョン(2504011225の形)
@@ -39,3 +41,9 @@ public enum GameStatus
     Downloaded,
     UpdateAvailable //ダウンロードされているけど新しいバージョンがある
 }
+
+/// <summary>
+/// GameDataの必要要件を満たしているか確認するための属性
+/// </summary>
+[AttributeUsage(AttributeTargets.Field)]
+public class MustItemAttribute : Attribute { }

@@ -32,16 +32,34 @@ public class GameDataManager
         List<GameData> gameDatas = new JSONandGameDataChanger().JSONDirPathToGameData(jsonsDirPath);
 
         GameDatasSingleton gameDatasSingleton = GameDatasSingleton.Instance;
-        List<GameData> gameDatasinSingleton = gameDatasSingleton.GameDatas;
-        //GameDatasSingletonにすでに追加されているフォルダ名ではないことを確認してから、追加する
-        foreach(GameData g in gameDatas)
-        {
-            if (gameDatasinSingleton.Any(x => x.GameDirName == g.GameDirName)) continue;
-            //追加
-            gameDatasSingleton.AddGameData(g);
-        }
+        gameDatasSingleton.AddGameDataList(gameDatas);
     }
 
+    /// <summary>
+    /// インターネット上(スプレッドシート)からGameData群をロード(シングルトンに追加)する
+    /// </summary>
+    /// <param name="filterObjects">絞りこみを行う場合、条件を代入したGameDataクラス,nullの場合絞りこみを行わない</param>
+    public void LoadGameDataFromSpSt(List<GameData> filterObjects)
+    {
+        List<GameData> gameDatas = new List<GameData>();
+        //スプレッドシートから全てのGameDataを取得してくる
+        if(filterObjects == null)
+        {
+
+        }
+        //条件をもとにスプレッドシートからGameDataを取得してくる
+        else
+        {
+            SpreadSheetDataGet spreadSheetDataGet = new SpreadSheetDataGet();
+            string jsonPathKey = AllDirs.GetInstance().JsonPathKey;
+            string spId = AllDirs.GetInstance().SpreadSheetID;
+            foreach(GameData g in filterObjects)
+            {
+                List<GameData> getDatas = spreadSheetDataGet.FilterGameDataFromSpreadSheet(g, jsonPathKey, spId);
+
+            }
+        }
+    }
 
     //============================================================================================================
     //一旦利用しないものとする。最終実装まで必要なければ消すこと。(自動でソフトが追加するよりも利用者が能動的に追加したほうが良いため)

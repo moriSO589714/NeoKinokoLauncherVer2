@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -12,11 +13,26 @@ public class GameDatasSingleton : BasedSingleton<GameDatasSingleton>
     //ゲームデータをリストにセット
     public void AddGameData(GameData gameData)
     {
-        GameDatas.Add(gameData);
+        //追加
+        if(CheckGameData(gameData)) GameDatas.Add(gameData);
     }
     public void AddGameDataList(List<GameData> gameDatas)
     {
-        GameDatas.AddRange(gameDatas);
+        List<GameData> addGameDataList = new List<GameData>();
+        foreach(GameData gameData in gameDatas)
+        {
+            if(CheckGameData(gameData)) addGameDataList.Add(gameData);
+        }
+        GameDatas.AddRange(addGameDataList);
+    }
+
+    private bool CheckGameData(GameData gameData)
+    {
+        //同名のゲームフォルダ名のゲームが既に追加されていた場合は追加しない
+        if (GameDatas.Any(x => x.GameDirName == gameData.GameDirName)) return false;
+        //ゲーム情報として扱う最低要件を満たせていない場合は追加しない
+        if (!GameDataQualityCheck.CheckQuality(gameData)) return false;
+        return true;
     }
 
     //リストのリセット
