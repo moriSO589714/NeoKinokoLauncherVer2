@@ -30,7 +30,7 @@ public class NetworksSingleton : BasedSingleton<NetworksSingleton>
     public void GetElementOrder()
     {
         AllDirs allDirs = AllDirs.GetInstance();
-        List<string> sheetElementOrder = new SpreadSheetDataGet().GetElementTypeArray(allDirs.JsonPathKey, allDirs.SpreadSheetID);
+        List<string> sheetElementOrder = new CollectivelyGetFromSpSt().GetElementTypeArray(allDirs.JsonPathKey, allDirs.SpreadSheetID);
         if (sheetElementOrder == null || sheetElementOrder.Count <= 0) throw new System.Exception("failed to get sheetElement");
 
         SpreadSheetElementOrder = new List<string>(sheetElementOrder);
@@ -59,16 +59,7 @@ public class NetworksSingleton : BasedSingleton<NetworksSingleton>
         int numberofColumns = new SpreadSheetTools().IndextoSSColumn(spreadSheetElementOrder.IndexOf("GameID"));
         Vector2 gameIDStartCell = new Vector2(numberofColumns, allDirs.SpreadSheetStartCellPos.y);
         SheetsService sheetsService = new SpreadSheetBased().CreateSpStAPI(allDirs.JsonPathKey);
-        Dictionary<Vector2, string> gameIDColumnValues = new SpreadSheetBased().ScrollCellValueSearch(sheetsService, allDirs.SpreadSheetID, new Vector2(numberofColumns, 3),true);
-
-        int liminalRow = -1;
-        foreach(var dicValue in gameIDColumnValues)
-        {
-            if(liminalRow < dicValue.Key.y)
-            {
-                liminalRow = (int)dicValue.Key.y;
-            }
-        }
+        int liminalRow = new SpreadSheetBased().ReturnRowTableLastCell(sheetsService, allDirs.SpreadSheetID, new Vector2(numberofColumns, 3),(int)SearchUnit.LargeRange);
 
         LiminalRow = liminalRow;
     }

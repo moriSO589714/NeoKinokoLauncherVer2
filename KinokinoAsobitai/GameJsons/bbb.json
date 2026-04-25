@@ -2,10 +2,12 @@
   "GameDirName": "bbb",
   "GameTitle": "BBBTitle",
   "GameExeName": "bbb.exe",
+  "GameID": "bc9bc143-37a0-424d-b774-875bf9370c83",
   "GameDevelopper": "bbbbb",
   "GameDriveId": "",
   "GameImageId": "",
   "GameSoftwareType": "Unity",
   "GameDescription": "",
-  "GameVersion": 0
+  "GameVersion": 0,
+  "GameStatus": 0
 }

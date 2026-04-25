@@ -1,12 +1,11 @@
 ﻿using Google.Apis.Sheets.v4;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-public class SpreadSheetDataGet : SpreadSheetBased
+public class CollectivelyGetFromSpSt : SpreadSheetBased
 {
     /// <summary>
     /// スプレッドシートから要素名(GameDataのjsonと共通)を取り出してきて、スプシにある順番で配列に格納して返す
@@ -19,9 +18,35 @@ public class SpreadSheetDataGet : SpreadSheetBased
         AllDirs allDirs = AllDirs.GetInstance();
         Vector2 targetPos = new Vector2(allDirs.SpreadSheetStartCellPos.x, allDirs.SpreadSheetStartCellPos.y - 1);
         //ScrollCellValueSearchで得られたディクショナリ型のデータを要素のみを取り出してリストに入れる
-        List<string> elementTypeArray = ScrollCellValueSearch(spStService, spStID, targetPos, false).Select(x => x.Value).ToList();
+        int lastColumnNum = ReturnColumnTableLastCell(spStService, spStID, targetPos, (int)SearchUnit.NarrowRange);
+        //返り値の型で１列リストで取得して返す。（返り値が別のメソッドを別で作ってもいいかも）
 
-        return elementTypeArray;
+        return null;
+    }
+
+    /// <summary>
+    /// スプレッドシートにあるすべてのゲーム情報を取得してくる
+    /// </summary>
+    /// <param name="jsonKeyPath"></param>
+    /// <param name="spStId"></param>
+    /// <returns></returns>
+    public List<GameData> AllGameDataFromSpSt(string jsonKeyPath, string spStId)
+    {
+        AllDirs allDirs = AllDirs.GetInstance();
+        SheetsService spStService = CreateSpStAPI(jsonKeyPath);
+        NetworksSingleton networksSingleton = NetworksSingleton.Instance;
+        List<string> spStElementOrder = networksSingleton.ReturnElementOrder();
+
+        Vector2 searchSpStEndPos = new Vector2(new SpreadSheetTools().IndextoSSColumn(spStElementOrder.Count - 1), networksSingleton.ReturnLiminalRow());
+        List<List<string>> spStValue = ReturnSSValue(spStService, spStId, allDirs.SpreadSheetStartCellPos, searchSpStEndPos);
+        List<GameData> returnList = new List<GameData>();
+        //1行ずつGameDataクラスにする
+        foreach(List<string> strList in spStValue)
+        {
+            GameData createGameData = SpreadSheetElementArrayToGameData(spStElementOrder, strList);
+            if(createGameData != null) returnList.Add(createGameData);
+        }
+        return new List<GameData>(returnList);
     }
 
     /// <summary>
@@ -33,14 +58,14 @@ public class SpreadSheetDataGet : SpreadSheetBased
     public List<GameData> FilterGameDataFromSpreadSheet(GameData filterGameData, string jsonKeyPath, string spStId)
     {
         AllDirs allDirs = AllDirs.GetInstance();
-        //シートの最も上の行(C,*)から条件に合うものだけをゲームデータにして、配列に格納していく
-        Dictionary<string, string> stringDictionaryFilter = GameDataFilterToDictionaryFilter(filterGameData);
+        SheetsService spStService = CreateSpStAPI(jsonKeyPath);
 
+        //フィルタリング内容をディクショナリに入れる
+        Dictionary<string, string> stringDictionaryFilter = GameDataFilterToDictionaryFilter(filterGameData);
         //ディクショナリの要素とスプレッドシートの要素名の列数を変換させる
         NetworksSingleton networksSingleton = NetworksSingleton.Instance;
         List<string> spStElementOrder = networksSingleton.ReturnElementOrder();
 
-        SheetsService spStService = CreateSpStAPI(jsonKeyPath);
 
         //keyがstring型の要素名であったのを、スプレッドシートの列数に変換して値(条件)と一緒にディクショナリに格納する
         Dictionary<int, string> columnNumAndFilters = new Dictionary<int, string>();
@@ -58,16 +83,21 @@ public class SpreadSheetDataGet : SpreadSheetBased
         foreach (var lastFilteredCellPair in lastFilterdCellDictionary)
         {
             //そのゲームのデータをスプレッドシートから全て取得
-            List<List<string>> getedAllData = ReturnSSValue(spStService, spStId, new Vector2(allDirs.SpreadSheetStartCellPos.x, lastFilteredCellPair.Key.y), new Vector2(new SpreadSheetTools().IndextoSSColumn(spStElementOrder.Count), lastFilteredCellPair.Key.y));
+            List<List<string>> gotAllData = ReturnSSValue(spStService, spStId, new Vector2(allDirs.SpreadSheetStartCellPos.x, lastFilteredCellPair.Key.y), new Vector2(new SpreadSheetTools().IndextoSSColumn(spStElementOrder.Count - 1), lastFilteredCellPair.Key.y));
             //多次元配列のリストをstringのリストに変換
-            List<string> getedAllDataArray = new List<string>(getedAllData[0]);
+            List<string> gotAllDataArray = new List<string>(gotAllData[0]);
 
-            GameData createdGameData = SpreadSheetElementArrayToGameData(spStElementOrder, getedAllDataArray);
+            GameData createdGameData = SpreadSheetElementArrayToGameData(spStElementOrder, gotAllDataArray);
             if (createdGameData != null) returnList.Add(createdGameData);
         }
         return new List<GameData>(returnList);
     }
 
+    /// <summary>
+    /// GameDataクラスで定義されたフィルタリングを<フィルタの変数名,フィルタリングする内容>のディクショナリ型に変換する
+    /// </summary>
+    /// <param name="filterGameData"></param>
+    /// <returns></returns>
     private Dictionary<string, string> GameDataFilterToDictionaryFilter(GameData filterGameData)
     {
         FieldInfo[] gameDataFields = typeof(GameData).GetFields();
@@ -208,6 +238,8 @@ public class SpreadSheetDataGet : SpreadSheetBased
                 gamedataFieldInfo[fieldInfoIndex].SetValue(returnGameData, SpreadSheetValue[i]);
             }
         }
+        //ステータスをNotDownloadにする
+        returnGameData.Status = GameStatus.NotDownloaded;
 
         return returnGameData;
     }

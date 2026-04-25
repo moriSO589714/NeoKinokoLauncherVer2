@@ -13,6 +13,9 @@ public class GameDataManager
     {
         new GameDatasSingleton().ResetGameDataList();
         LoadGameDataFromJsons();
+        GameData testGameData = new GameData();
+        testGameData.GameTitle = "2DGolf";
+        LoadGameDataFromSpSt(new List<GameData>() { testGameData });
     }
 
 
@@ -42,6 +45,7 @@ public class GameDataManager
     public void LoadGameDataFromSpSt(List<GameData> filterObjects)
     {
         List<GameData> gameDatas = new List<GameData>();
+        GameDatasSingleton gameDatasSingleton = GameDatasSingleton.Instance;
         //スプレッドシートから全てのGameDataを取得してくる
         if(filterObjects == null)
         {
@@ -50,13 +54,13 @@ public class GameDataManager
         //条件をもとにスプレッドシートからGameDataを取得してくる
         else
         {
-            SpreadSheetDataGet spreadSheetDataGet = new SpreadSheetDataGet();
+            CollectivelyGetFromSpSt spreadSheetDataGet = new CollectivelyGetFromSpSt();
             string jsonPathKey = AllDirs.GetInstance().JsonPathKey;
             string spId = AllDirs.GetInstance().SpreadSheetID;
             foreach(GameData g in filterObjects)
             {
                 List<GameData> getDatas = spreadSheetDataGet.FilterGameDataFromSpreadSheet(g, jsonPathKey, spId);
-
+                gameDatasSingleton.AddGameDataList(getDatas);
             }
         }
     }

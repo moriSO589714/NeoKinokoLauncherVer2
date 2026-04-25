@@ -19,15 +19,15 @@ public class test : MonoBehaviour
         new LoadFlexibleDir().SetFlexibleDirByJson();
         string jsonPathKey = AllDirs.GetInstance().JsonPathKey;
         string spID = AllDirs.GetInstance().SpreadSheetID;
-        /*
+        
         SpreadSheetBased spreadSheetBased = new SpreadSheetBased();
-        Dictionary<Vector2, string> dictionary = spreadSheetBased.ConvertWListintoDictionary( spreadSheetBased.ReturnSSValue(spreadSheetBased.CreateSSAPI(jsonPathKey),spID,new Vector2(2,3), new Vector2(5,6)));
-        */
+        SheetsService sheetService = spreadSheetBased.CreateSpStAPI(jsonPathKey);
+        spreadSheetBased.ReturnRowTableLastCell(sheetService, spID, new Vector2(2,1), 10);
         
-        GameData gameData = new GameData();
-        gameData.GameTitle = "2DGolf";
-        new SpreadSheetDataGet().FilterGameDataFromSpreadSheet(gameData, jsonPathKey,spID);
-        
+
+        //List<GameData> getData = new SpreadSheetDataGet().AllGameDataFromSpSt(jsonPathKey, spID);
+        //new GameDataManager().OverallGameDataLoad();
+        //GameDatasSingleton gameDatasSingleton = GameDatasSingleton.Instance;
         Debug.Log("end");
     }
 }

@@ -3,9 +3,11 @@
   "GameTitle": "DDDTitle",
   "GameExeName": "ddd.exe",
   "GameDevelopper": "ddddd",
+  "GameID": "ef063468-ff5e-4491-a9a5-223b7e6ea19d",
   "GameDriveId": "",
   "GameImageId": "",
   "GameSoftwareType": "Unity",
   "GameDescription": "",
-  "GameVersion": 0
+  "GameVersion": 0,
+  "GameStatus": 0
 }

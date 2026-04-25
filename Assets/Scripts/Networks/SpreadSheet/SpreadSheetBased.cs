@@ -10,6 +10,9 @@ using Unity.VisualScripting;
 
 public class SpreadSheetBased
 {
+    //スプレッドシート上で2つの座標から間の個数を求める際に値を修正するため
+    const int FixVectorDiffenceToArrayLength = 1;
+
     /// <summary>
     /// スプレッドシート接続用のAPIを作成する。
     /// </summary>
@@ -96,7 +99,6 @@ public class SpreadSheetBased
         {
             for(int i2 = 0; i2 < wList[i].Count; i2++)
             {
-                //定数1を足しているのは、リストのindexが0で始まるため
                 Vector2 cellPos = new Vector2(spreadSheetTools.IndextoSSColumn(i2), spreadSheetTools.IndextoSSRow(i));
                 convertedDictionary[cellPos] = wList[i][i2];
             }
@@ -106,38 +108,105 @@ public class SpreadSheetBased
     }
 
     /// <summary>
-    /// 特定の行または列から、垂直または水平方向に値が設定されていない場所まで値を取得し、文字列の配列として返す
+    /// 特定のセルから列または行方向において最後にあるセル座標を取得する
     /// </summary>
-    /// <param name="startPos">検索を開始するセルの場所(列,行)</param>
-    /// <param name="isRow">true =　列方向への検索, false = 行方向への検索</param>
+    /// <param name="startPos">検索の開始地点とするセルの座標</param>
+    /// <param name="oneTimeSearchUnit">1回で検索するセルの長さ。最後に到達しない場合はもう一度この長さで検索する</param>
     /// <returns></returns>
-    public Dictionary<Vector2, string> ScrollCellValueSearch(SheetsService sheetService, string sheetID, Vector2 startPos, bool isRow)
+    public int ReturnRowTableLastCell(SheetsService sheetService, string sheetId, Vector2 startPos, int oneTimeSearchUnit)
     {
-        Dictionary<Vector2, string> getValueDic = new Dictionary<Vector2, string>();
-        Vector2 targetPos = startPos;
+        bool loopFlag = true;
+        Vector2 endSearchPos = Vector2.zero;
+        int addNum = oneTimeSearchUnit - 1; //足す際にセル数とズレてしまうため
 
-        bool flag = true;
-        while (flag)
+        int lastListLength = 0;
+        while (loopFlag)
         {
-            List<List<string>> returnValues = ReturnSSValue(sheetService, sheetID, targetPos, targetPos);
+            endSearchPos = new Vector2(startPos.x, startPos.y + addNum);
+            if (isInLine(startPos, endSearchPos)) throw new Exception("range is not in one line");
+            
+            List<List<string>> returnValues = ReturnSSValue(sheetService, sheetId, startPos, endSearchPos);
             if(returnValues == null)
             {
-                flag = false; break;
+                lastListLength = 0;
+                loopFlag = false;
+            }
+
+            //セルの範囲がstartPos～endPosの範囲に収まっているかの確認
+            if(isInRange(returnValues.Count, (int)startPos.y, (int)endSearchPos.y))
+            {
+                lastListLength = returnValues.Count;
+                loopFlag = false; //収まっていたらループを抜ける
             }
             else
             {
-                getValueDic[targetPos] = returnValues[0][0];
-                if (isRow) targetPos.y += 1;
-                else targetPos.x += 1;
+                startPos = new Vector2(endSearchPos.x, endSearchPos.y + 1);
             }
         }
+        //スプレッドシートの最後の列数を求める
+        int lastCellRow = (int)endSearchPos.y - (oneTimeSearchUnit - lastListLength);
+        return lastCellRow;
+    }
 
-        if(getValueDic.Count == 0)
+    public int ReturnColumnTableLastCell(SheetsService sheetService, string sheetId, Vector2 startPos, int oneTimeSearchUnit)
+    {
+        bool loopFlag = true;
+        Vector2 endSearchPos = Vector2.zero ;
+
+        int lastListLength = 0;
+        while (loopFlag)
         {
-            throw new System.Exception("empty or failed to get elementTyoe from SpreadSheet.");
-        }
+            endSearchPos = new Vector2(startPos.x + oneTimeSearchUnit, startPos.y);
+            if (isInLine(startPos, endSearchPos)) throw new Exception("range is not in one line");
 
-        return new Dictionary<Vector2, string>(getValueDic);
+            List<List<string>> returnValues = ReturnSSValue(sheetService, sheetId, startPos, endSearchPos);
+            if (returnValues == null)
+            {
+                lastListLength = 0;
+                loopFlag = false;
+            }
+
+            //セルの範囲がstartPos～endPosの範囲に収まっているかの確認
+            if (isInRange(returnValues[0].Count, (int)startPos.x, (int)endSearchPos.x))
+            {
+                lastListLength = returnValues[0].Count;
+                loopFlag = false; //収まっていたらループを抜ける
+            }
+            else
+            {
+                startPos = new Vector2(endSearchPos.x + 1, endSearchPos.y);
+            }
+        }
+        int lastCellColumn = (int)endSearchPos.x - (oneTimeSearchUnit - lastListLength);
+        return lastCellColumn;
+    }
+
+    private bool isInRange(int listLength, int startPos, int endPos)
+    {
+        //引数から必要な要素の個数を取得する
+        int needLength = (endPos - startPos) + FixVectorDiffenceToArrayLength;
+
+        if(needLength > listLength) //取得してきた値が範囲内に収まっている場合
+        {
+            return true;
+        }
+        else if (needLength <= listLength)
+        {
+            return false;
+        }
+        else
+        {
+            throw new Exception("range error");
+        }
+    }
+
+    /// <summary>
+    /// startPosとendPosがシート内で直線に並んでいるか確かめる
+    /// </summary>
+    private bool isInLine(Vector2 startPos, Vector2 endPos)
+    {
+        if (startPos.x != endPos.x && startPos.y != endPos.y) return true;
+        return false;
     }
 
     /// <summary>
@@ -151,3 +220,10 @@ public class SpreadSheetBased
         return returnValue;
     }
 }
+
+public enum SearchUnit 
+{
+    NarrowRange = 10,
+    LargeRange = 100,
+}
+

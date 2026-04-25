@@ -20,6 +20,7 @@ public class GameData
     public string GameDirName; //ゲームのフォルダ名
     [MustItem]
     public string GameExeName; //ゲームの実行ファイルの名前
+    [MustItem]
     public string GameID; //ゲームの固有番号
     public string GameVersion; //ゲームのバージョン(2504011225の形)
     public string GameDescription; //ゲームの説明
@@ -29,6 +30,7 @@ public class GameData
     public string GameImageId; //ゲームのサムネのドライブID
     public string GameImageName; //ゲームのサムネのファイル名(〇〇.png)
     public string[] GameTags; //ゲームに付与されているタグ
+    [MustItem]
     public GameStatus Status; //ゲームの状態(ダウンロードされているかなど)
 }
 
@@ -37,9 +39,10 @@ public class GameData
 /// </summary>
 public enum GameStatus
 {
+    ByLocal, //ローカルで追加されたゲーム
     NotDownloaded,
     Downloaded,
-    UpdateAvailable //ダウンロードされているけど新しいバージョンがある
+    UpdateAvailable, //ダウンロードされているけど新しいバージョンがある
 }
 
 /// <summary>

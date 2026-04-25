@@ -28,12 +28,26 @@ public class GameDatasSingleton : BasedSingleton<GameDatasSingleton>
 
     private bool CheckGameData(GameData gameData)
     {
-        //同名のゲームフォルダ名のゲームが既に追加されていた場合は追加しない
-        if (GameDatas.Any(x => x.GameDirName == gameData.GameDirName)) return false;
+        foreach(GameData singletonGameData in GameDatas)
+        {
+            //シングルトンに既に同じゲームIDのゲーム情報が登録されている場合
+            if(singletonGameData.GameID == gameData.GameID)
+            {
+                //追加されるゲームのバージョンが新しい場合
+                if(int.Parse(singletonGameData.GameVersion) < int.Parse(gameData.GameVersion))
+                {
+                    singletonGameData.Status = GameStatus.UpdateAvailable;
+                }
+                return false;
+            }
+        }
+
         //ゲーム情報として扱う最低要件を満たせていない場合は追加しない
         if (!GameDataQualityCheck.CheckQuality(gameData)) return false;
         return true;
     }
+
+
 
     //リストのリセット
     public void ResetGameDataList()
