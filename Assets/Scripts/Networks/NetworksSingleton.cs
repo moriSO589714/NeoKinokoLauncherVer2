@@ -39,9 +39,9 @@ public class NetworksSingleton : BasedSingleton<NetworksSingleton>
         {
             onNetGameInfo = new OnNetGameInfoFromSpSt(sheetsService, allDirs.SpreadSheetID);
         }
-        else if (!CheckInEnvironment.CheckInEditor() && !CheckInEnvironment.CheckDoingNet())
+        else if (CheckInEnvironment.CheckInEditor() && !CheckInEnvironment.CheckDoingNet())
         {
-            onNetGameInfo = new OnNetGameInfoFromSpSt(sheetsService, allDirs.SpreadSheetID);
+            onNetGameInfo = new TestOnNetGameInfo();
         }
         List<string> sheetElementOrder = new CollectivelyGetFromSpSt().GetElementTypeArray(onNetGameInfo);
         if (sheetElementOrder == null || sheetElementOrder.Count <= 0) throw new System.Exception("failed to get sheetElement");

@@ -30,8 +30,8 @@ public static class SpStTools
     /// </summary>
     public static bool isInLine(Vector2 startPos, Vector2 endPos)
     {
-        if (startPos.x != endPos.x && startPos.y != endPos.y) return true;
-        return false;
+        if (startPos.x != endPos.x && startPos.y != endPos.y) return false;
+        return true;
     }
 
     /// <summary>
