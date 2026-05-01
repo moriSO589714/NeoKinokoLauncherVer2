@@ -8,22 +8,6 @@ using UnityEngine;
 public class CollectivelyGetFromSpSt
 {
     /// <summary>
-    /// スプレッドシートから要素名(GameDataのjsonと共通)を取り出してきて、スプシにある順番で配列に格納して返す
-    /// (重い処理なので複数走らせない)
-    /// </summary>
-    public List<string> GetElementTypeArray(OnNetGameInfo onNetGameInfo)
-    {
-        AllDirs allDirs = AllDirs.GetInstance();
-        //ここでシートのカテゴリ名のスタート位置を指定
-        Vector2 targetPos = new Vector2(allDirs.SpreadSheetStartCellPos.x, allDirs.SpreadSheetStartCellPos.y - 1);
-        //ScrollCellValueSearchで得られたディクショナリ型のデータを要素のみを取り出してリストに入れる
-        List<string> elementTypeArray = new List<string>();
-        int lastColumnNum = new LastCellManager().ReturnLastCellPos(onNetGameInfo,targetPos, SearchUnit.NarrowRange, DirectionOnSpSt.column,elementTypeArray);
-
-        return elementTypeArray;
-    }
-
-    /// <summary>
     /// スプレッドシートにあるすべてのゲーム情報を取得してくる
     /// </summary>
     public List<GameData> AllGameDataFromSpSt()
@@ -75,7 +59,7 @@ public class CollectivelyGetFromSpSt
             Vector2 endPos = new Vector2(SpStTools.LengthToLastIndex(spStElementOrder.Count), lastFilteredCellPair.Key.y);
             //そのゲームのデータをスプレッドシートから全て取得
             List<List<string>> allGameInfo = networksSingleton.ReturnGameInfoAllData(false);
-            List<List<string>> gotGameInfos = SpStTools.SearchLocalSpStDataByPos(allGameInfo, startPos, endPos);
+            List<List<string>> gotGameInfos = UsedLocalTable.TrimValueRangeFromLocalTable(allGameInfo, startPos, endPos);
             //多次元配列のリストをstringのリストに変換
             List<string> gotAllDataArray = new List<string>(gotGameInfos[0]);
 
@@ -127,7 +111,7 @@ public class CollectivelyGetFromSpSt
         int allGameCounts = allData.Count;
         
         //検索を行う始めの1列をスプレッドシートから取得してくる
-        List<List<string>> firstCheckSpStValues = SpStTools.SearchLocalSpStDataByPos(allData, new Vector2(firstCheckColumn, 0), new Vector2(firstCheckColumn, allGameCounts - 1));
+        List<List<string>> firstCheckSpStValues = UsedLocalTable.TrimValueRangeFromLocalTable(allData, new Vector2(firstCheckColumn, 0), new Vector2(firstCheckColumn, allGameCounts - 1));
         //多重配列で取得してきた値を座標,値のディクショナリに変換する
         Dictionary<Vector2, string> firstCheckSpStDic = new Dictionary<Vector2, string>();
         for(int i = 0; i < firstCheckSpStValues.Count; i++)
@@ -150,7 +134,7 @@ public class CollectivelyGetFromSpSt
                 if (filterPairs.Key == firstCheckColumn) continue;
                 //セルの値を取得
                 Vector2 searchedCellPos = new Vector2(filterPairs.Key, clearedPairs.Key.y);
-                List<List<string>> gotValue = SpStTools.SearchLocalSpStDataByPos(allData, searchedCellPos, searchedCellPos);
+                List<List<string>> gotValue = UsedLocalTable.TrimValueRangeFromLocalTable(allData, searchedCellPos, searchedCellPos);
                 string checkedCellValue = "";
                 if (gotValue != null)
                 {

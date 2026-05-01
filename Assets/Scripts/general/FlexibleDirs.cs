@@ -19,4 +19,6 @@ public class FlexibleDirs
     public string SpreadSheetID;
     //スプレッドシートでデータテーブルの範囲が始まるセルの場所(列,行)
     public Vector2 SpreadSheetStartCellPos;
+    //スプレッドシートで項目名が書かれた行が始まるセルの場所(列,行)
+    public Vector2 SpStElementStartCellPos;
 }

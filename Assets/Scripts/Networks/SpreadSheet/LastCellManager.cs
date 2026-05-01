@@ -18,7 +18,6 @@ public class LastCellManager
     /// <param name="oneTimeSearchUnit">一度に検索をかける範囲</param>
     /// <param name="direction">検索方向</param>
     /// <param name="returnValuesList">値を保存しておきたい場合。必要なければnull</param>
-    /// <returns></returns>
     public int ReturnLastCellPos(OnNetGameInfo onNetGameInfo, Vector2 targetPos, SearchUnit oneTimeSearchUnit, DirectionOnSpSt direction, List<string> returnValuesList)
     {
         bool loopFlag = true;

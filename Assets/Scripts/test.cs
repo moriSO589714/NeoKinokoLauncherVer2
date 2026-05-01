@@ -22,13 +22,10 @@ public class test : MonoBehaviour
         string spStId = allDirs.SpreadSheetID;
         SheetsService sheetsService = new CreateAPIService(jsonPathKey).CreateSheetAPIService();
         NetworksSingleton networksSingleton = NetworksSingleton.Instance;
-
-        networksSingleton.ReturnElementOrder(true);
-        /*
         GameData g = new GameData();
-        g.GameTags = new string[1] { "アクション" };
-        List<GameData> gameDatas =  new CollectivelyGetFromSpSt().FilterGameDataFromSpSt(g);
-        */
+        g.GameTags = new string[1] { "アクションゲーム" };
+        List<GameData> gameDatas = new CollectivelyGetFromSpSt().AllGameDataFromSpSt();
+        
         Debug.Log("last");
     }
 }

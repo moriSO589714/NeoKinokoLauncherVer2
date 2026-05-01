@@ -65,7 +65,7 @@ public static class SpStTools
         {
             //必要な長さを取得
             int needlyLengthOfColumn = CalcCellsLength((int)startPos.x, (int)endPos.x);
-            for(int i = 0; i < targetList.Count; i++)
+            for (int i = 0; i < targetList.Count; i++)
             {
                 if (targetList[i].Count < needlyLengthOfColumn)
                 {
@@ -76,13 +76,13 @@ public static class SpStTools
                 }
             }
         }
-        else if(direction == DirectionOnSpSt.row)
+        else if (direction == DirectionOnSpSt.row)
         {
             int needlyLengthOfRow = CalcCellsLength((int)startPos.y, (int)endPos.y);
             int columnLength = CalcCellsLength((int)startPos.x, (int)endPos.x);
             if (targetList.Count < needlyLengthOfRow)
             {
-                for(int i = 0; i < needlyLengthOfRow - targetList.Count; i++)
+                for (int i = 0; i < needlyLengthOfRow - targetList.Count; i++)
                 {
                     //空のstringが入ったリストで不足ぶんを満たす
                     filledList.Add(new string[columnLength].Select(x => x = "").ToList());
@@ -91,53 +91,6 @@ public static class SpStTools
         }
 
         return new List<List<string>>(filledList);
-    }
-
-    /// <summary>
-    /// 範囲指定(Vector2)を行い２次元配列のリストから値を切り出す
-    /// 範囲指定は0,0で始まる配列のindex値での指定
-    /// </summar>
-    public static List<List<string>> SearchLocalSpStDataByPos(List<List<string>> allData, Vector2 startPos, Vector2 endPos)
-    {
-        int lowestColumnNum = Math.Min((int)startPos.x, (int)endPos.x);
-        int lowestRowNum = Math.Min((int)startPos.y, (int)endPos.y);
-        int highestColumnNum = Math.Max((int)startPos.x, (int)endPos.x);
-        int highestRowNum = Math.Max((int)startPos.y, (int)endPos.y);
-        int allDataLastIndex = LengthToLastIndex(allData.Count);
-        //指定された範囲のデータがテスト用のデータに無かった場合nullを返す
-        if (allDataLastIndex < lowestRowNum) return null;
-        int maxListsLength = 0;
-        foreach (List<string> list in allData)
-        {
-            maxListsLength = maxListsLength < list.Count ? list.Count : maxListsLength;
-        }
-        if (LengthToLastIndex(maxListsLength) < lowestColumnNum) return null;
-
-        List<List<string>> UsedDataList = new List<List<string>>();
-        //リストの２次元配列から指定範囲を切り取る
-        for (int i = lowestRowNum; i <= highestRowNum; i++)
-        {
-            //i列のデータが存在しない場合
-            if (allDataLastIndex < i || i == -1)
-            {
-                break;
-            }
-            List<string> addDataList = new List<string>();
-            for (int i2 = lowestColumnNum; i2 <= highestColumnNum; i2++)
-            {
-                if (LengthToLastIndex(allData[i].Count) < i2)
-                {
-                    continue;
-                }
-                else
-                {
-                    addDataList.Add(allData[i][i2]);
-                }
-            }
-            UsedDataList.Add(addDataList);
-        }
-
-        return UsedDataList;
     }
 }
 

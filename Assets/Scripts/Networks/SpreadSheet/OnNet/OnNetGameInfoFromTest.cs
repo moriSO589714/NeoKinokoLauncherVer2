@@ -12,14 +12,16 @@ public class OnNetGameInfoFromTest : OnNetGameInfo
 {
     public List<List<string>> GetGameInfo(Vector2 startPos, Vector2 endPos)
     {
-        //SearchLocalSpStDataByPosは配列のindex値での指定なので、シートの座標で指定されている引数を修正する
+        //テスト用の替えデータ
+        List<List<string>> alternaDataSet = AlternaDatas.SpStAlternaDatas;
+        
+        //シートの座標で指定されている1から始まる座標をローカルデータから切り出すために0から始まる座標に変える
         startPos.x--;
         startPos.y--;
         endPos.x--;
         endPos.y--;
-
-        List<List<string>> alternaDataSet = AlternaDatas.SpStAlternaDatas;
-        List<List<string>> UsedDataList = SpStTools.SearchLocalSpStDataByPos(alternaDataSet, startPos, endPos);
+        //替えデータから取得したい範囲を切り出し
+        List<List<string>> UsedDataList = UsedLocalTable.TrimValueRangeFromLocalTable(alternaDataSet, startPos, endPos);
         return UsedDataList.Select(x => new List<string>(x)).ToList();
     }
 }
