@@ -1,12 +1,6 @@
-﻿using DG.Tweening.Plugins;
-using Google.Apis.Sheets.v4.Data;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEngine;
-using UnityEngine.UIElements;
 
 public class WordEstimater
 {
