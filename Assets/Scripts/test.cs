@@ -52,8 +52,8 @@ public class test : MonoBehaviour
         //数字でディクショナリ分けしてくれない問題 summon cat 4...
         WordEmtCell wecLib = WECLibCreater.CreateLibFromStrList(testList, " ");
         WordEstimater wordEstimater = new WordEstimater(wecLib, " ");
-        List<string> strs = wordEstimater.ReturnEstimatedStrs("skill me", 1);
-        List<string> strs2 = wordEstimater.ReturnEstimatedStrs("skill me", 2);
+        List<string> strs = wordEstimater.ReturnEstimatedStrs("skill me", -1);
+        List<string> strs2 = wordEstimater.ReturnEstimatedStrs("skill me ", -1);
         
 
         WordEmtCell wecLib2 = WECLibCreater.CreateLibFromLineAndPriority(testDic);
