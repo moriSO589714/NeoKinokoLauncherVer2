@@ -8,7 +8,7 @@ using UnityEngine;
 public class CollectivelyGetFromSpSt
 {
     /// <summary>
-    /// スプレッドシートにあるすべてのゲーム情報を取得してくる
+    /// すべてのゲーム情報を取得してくる
     /// </summary>
     public List<GameData> AllGameDataFromSpSt()
     {
@@ -27,7 +27,7 @@ public class CollectivelyGetFromSpSt
     }
 
     /// <summary>
-    /// スプレッドシートから特定の条件にあうゲームの情報を取得し、GameDataクラスとして返す
+    /// 特定の条件にあうゲームの情報に限定し、GameDataクラスとして返す
     /// 複数の条件を適応させたい場合、このメソッドを複数実行する
     /// </summary>
     /// <param name="conditions">検索する条件を設定用。絞りこみたい条件を変数として格納したGameDataクラスを渡すことで、その条件にあうゲームの情報のみを返す</param>
