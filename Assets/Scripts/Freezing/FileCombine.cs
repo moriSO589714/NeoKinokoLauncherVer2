@@ -19,7 +19,8 @@ public class FileCombine
     /// 分割されたZIPファイルを結合して解凍するメソッド
     /// </summary>
     /// <param name="splitedFilesPath">結合されるファイル群が置かれているディレクトリのパス</param>
-    public void MergeSplitedFile(string splitedFilesPath, string margedFileInDirPath)
+    /// <return>解凍したファイルのパス</return>
+    public string MergeSplitedFile(string splitedFilesPath, string margedFileInDirPath)
     {
         //対象ディレクトリ内のファイルのパスを取得してくる
         string[] splitedFiles = Directory.GetFiles(splitedFilesPath);
@@ -30,22 +31,21 @@ public class FileCombine
             //ファイル欠損時に呼ぶメソッドを呼んで処理を終了
             IsLackFile?.Invoke(mistakeFiles.LackFiles);
             Debug.Log("ファイルの欠損を確認しました");
-            return;
+            return null;
         }
         else if (mistakeFiles.ErrorFilePathes.Count() != 0)
         {
             //ファイル欠損以外に問題があるファイルがある場合(ファイルの重複、名前の異なるファイル)
             IsErrorFile?.Invoke(mistakeFiles.ErrorFilePathes);
             Debug.Log("ファイル群のあるフォルダに問題のあるファイルがあります。");
-            return;
+            return null;
         }
 
         //データ群を拡張子でソート
         string[] sortedFiles = new FreezingTools().sortingFilesByPath(splitedFilesPath);
-        //一番初めに来るファイル(.00)のデータをバイト配列として取得する
-        byte[] dlDatabytes = File.ReadAllBytes(sortedFiles[0]);
-        //DLDataクラスに上記バイト配列からデータを格納
-        DLData targetDLData = new DLData(dlDatabytes);
+        DLData targetDLData = new DLData();
+        //DLDataクラスにソート後の一番始めに来るファイル(.00)をデシリアライズさせて、データを格納
+        targetDLData.DeserializeDataByFilePath(sortedFiles[0]);
 
         //targetDLDataから結合するゲームの詳細情報を取得する
         string dlFileName = targetDLData.FileName;
@@ -63,10 +63,14 @@ public class FileCombine
             }
         }
 
+        string createFilePath = Path.Combine(margedFileInDirPath, dlFileName);
+
         //結合して出来たZIPファイルを解凍する
-        ZipFile.ExtractToDirectory(margedFilePath, Path.Combine(margedFileInDirPath, dlFileName), Encoding.GetEncoding("shift_jis"));
+        ZipFile.ExtractToDirectory(margedFilePath, createFilePath, Encoding.GetEncoding("shift_jis"));
 
         //ZIPファイルを削除する
         System.IO.File.Delete(margedFilePath);
+
+        return createFilePath;
     }
 }

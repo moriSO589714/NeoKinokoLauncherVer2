@@ -54,7 +54,6 @@ public class NetworksSingleton : BasedSingleton<NetworksSingleton>
         }
     }
 
-
     public List<List<string>> ReturnGameInfoAllData(bool forceLoad)
     {
         if(_allGameDataOnSpSt != null && !forceLoad)

@@ -11,14 +11,14 @@ public class UIActBase : MonoBehaviour
 
     public virtual void OnClickAct()
     {
-        ClickAct();
+        ClickAct?.Invoke();
     }
     public virtual void OnPointerEnter()
     {
-        PointerEnterAct();
+        PointerEnterAct?.Invoke();
     }
     public virtual void OnPointerExit()
     {
-        PointerExitAct();
+        PointerExitAct?.Invoke();
     }
 }

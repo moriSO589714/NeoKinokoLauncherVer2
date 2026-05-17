@@ -88,8 +88,64 @@ public class CommonStateManager : BasedSingleton<CommonStateManager>
         _currentLoadState = state;
     }
 
-    public void AddOnChangeAction(Func<CancellationToken, UniTask> action)
+    public void AddOnChangeFunc(Func<CancellationToken, UniTask> func)
     {
-        _onChangeFuncs.Add(action);
+        _onChangeFuncs.Add(func);
+    }
+
+    public void AddOnMainLoadingFunc(Func<CancellationToken, UniTask> func)
+    {
+        _onMainLoadingFuncs.Add(func);
+    }
+
+    public void AddOnMainLoadingFunc(Action act)
+    {
+        _onMainLoadingFuncs.Add(x =>
+        {
+            act?.Invoke();
+            return UniTask.CompletedTask;
+        });
+    }
+
+    public void AddOnMiniLoadingFunc(Func<CancellationToken, UniTask> func)
+    {
+        _onMiniLoadingFuncs.Add(func);
+    }
+
+    public void AddOnMiniLoadingFunc(Action act)
+    {
+        _onMiniLoadingFuncs.Add(x =>
+        {
+            act?.Invoke();
+            return UniTask.CompletedTask;
+        });
+    }
+
+    public void AddOnBackLoadingFunc(Func<CancellationToken, UniTask> func)
+    {
+        _onBackLoadingFuncs.Add(func);
+    }
+
+    public void AddOnBackLoadingFunc(Action act)
+    {
+        _onBackLoadingFuncs.Add(x =>
+        {
+            act?.Invoke();
+            return UniTask.CompletedTask;
+        });
+    }
+
+    public void AddOutLoadingFunc(Func<CancellationToken, UniTask> func)
+    {
+        _outLoadFuncs.Add(func);
+    }
+
+    public void AddOutLoadingFunc(Action act)
+    {
+        _outLoadFuncs.Add(x =>
+        {
+            act?.Invoke();
+            return UniTask.CompletedTask;
+        });
     }
 }

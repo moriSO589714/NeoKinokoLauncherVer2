@@ -77,10 +77,12 @@ public class FileSpliting
                 chunkIndex++;
             }
         }
+        //上記ループだと、実際に追加されているchunkIndexよりも一つ多く足されてしまうので、修正
+        chunkIndex--;
 
         //チャンクインデックス00(.00)にDL情報のファイル（容量、ZIPファイル名等）を置いておく
         DLData createdDLData = new DLData(fileSize, fileName, chunkIndex);
-        string dlDataFileName = $"{fileName}.00";
+        string dlDataFileName = $"{fileName}.000";
         string dlDataPath = Path.Combine(saveinPath, dlDataFileName);
         using (FileStream dlDataFs = new FileStream(dlDataPath, FileMode.Create, FileAccess.Write))
         {

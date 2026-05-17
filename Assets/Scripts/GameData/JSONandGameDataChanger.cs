@@ -50,7 +50,7 @@ public class JSONandGameDataChanger
             GameData gameData = null;
             try
             {
-                gameData = new JSONTools().ReadJSON<GameData>(jsf);
+                gameData = JSONTools.ReadJSON<GameData>(jsf);
             }
             catch(Exception e)
             {

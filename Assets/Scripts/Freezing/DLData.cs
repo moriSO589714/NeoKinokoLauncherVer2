@@ -26,15 +26,15 @@ public class DLData
     /// <param name="filesPath"></param>
     public DLData(string filesPath)
     {
-        SetDataByPath(filesPath);
+        SerializeDataByPath(filesPath);
     }
     public DLData(long gameSize, string fileName, long splitedFileNum)
     {
-        SetDataByCustomDatas(gameSize, fileName, splitedFileNum);
+        SerializeDataByCustomDatas(gameSize, fileName, splitedFileNum);
     }
     public DLData(byte[] byteData)
     {
-        SetDataByByte(byteData);
+        DeserializeDataByByte(byteData);
     }
     public DLData()
     {
@@ -45,7 +45,7 @@ public class DLData
     /// 分割されたファイル群が入ったフォルダのパスからデータをセットするメソッド
     /// </summary>
     /// <param name="filesPath"></param>
-    public void SetDataByPath(string filesPath)
+    public void SerializeDataByPath(string filesPath)
     {
         //ファイル群のパスを順番にソートする
         string[] sortedFiles = new FreezingTools().sortingFilesByPath(filesPath);
@@ -57,7 +57,7 @@ public class DLData
     /// <param name="gameSize">ゲームの全体容量(不明時は-1を代入)</param>
     /// <param name="fileName">ゲームデータが入ったフォルダの名前(不明時は""を代入)</param>
     /// <param name="splitedFileNum">ゲームが分割された際の分割数(不明時は-1を代入)</param>
-    public void SetDataByCustomDatas(long gameSize, string fileName,long splitedFileNum)
+    public void SerializeDataByCustomDatas(long gameSize, string fileName,long splitedFileNum)
     {
         if(gameSize != -1) GameSize = gameSize;
         if(fileName != "") FileName = fileName;
@@ -68,7 +68,7 @@ public class DLData
     /// バイト配列からデータを取り出しセットする(通常、.00ファイルを読み込む際に利用する)
     /// </summary>
     /// <param name="byteData"></param>
-    public void SetDataByByte(byte[] byteData)
+    public void DeserializeDataByByte(byte[] byteData)
     {
         string dlData = System.Text.Encoding.UTF8.GetString(byteData);
 
@@ -76,6 +76,14 @@ public class DLData
         GameSize = long.Parse(splitedDatas[0]);
         FileName = splitedDatas[1];
         SplitedFileNum = long.Parse(splitedDatas[2]);
+    }
+
+    public void DeserializeDataByFilePath(string filePath)
+    {
+        //ファイルをバイト配列に変換
+        byte[] bytes = File.ReadAllBytes(filePath);
+        //バイト配列を使ったデシリアライズを行う
+        DeserializeDataByByte(bytes);
     }
 
     /// <summary>

@@ -17,7 +17,6 @@ public class GameBoxsManager : MonoBehaviour
     private void Awake()
     {
         _startTimeYPos = this.GetComponent<RectTransform>().anchoredPosition.y;
-        monitorPlayerInput.onMouseScroll += OnScroll;
     }
 
     /// <summary>

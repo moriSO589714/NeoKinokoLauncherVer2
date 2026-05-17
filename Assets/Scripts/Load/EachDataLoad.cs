@@ -5,7 +5,6 @@ using UnityEngine;
 public class EachDataLoad : MonoBehaviour
 {
     [SerializeField] GameBoxsManager gameBoxsManager;
-    [SerializeField] UIActBase OnInterNetUI;
 
     private void Awake()
     {
@@ -14,7 +13,7 @@ public class EachDataLoad : MonoBehaviour
 
     public void Init()
     {
-        OnInterNetUI.ClickAct = LoadInternetGameDatas;
+
     }
     /// <summary>
     /// ローカルのみでmain画面を構成するためのデータをロードする

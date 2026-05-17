@@ -32,6 +32,17 @@ public class CreateAPIService
 
     public DriveService CreateDriveAPIService()
     {
-        return null;
+        GoogleCredential credential;
+        using (var stream = new FileStream(_jsonPathKey, FileMode.Open, FileAccess.Read))
+        {
+            credential = GoogleCredential.FromStream(stream).CreateScoped(DriveService.ScopeConstants.Drive);
+        }
+
+        DriveService service = new DriveService(new BaseClientService.Initializer()
+        {
+            HttpClientInitializer = credential,
+            ApplicationName = "DriveService"
+        });
+        return service;
     }
 }

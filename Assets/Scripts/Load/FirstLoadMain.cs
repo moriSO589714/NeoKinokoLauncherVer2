@@ -16,7 +16,7 @@ public class FirstLoadMain : MonoBehaviour
     {
         //ステート管理クラスの取得、ステート変更時に行う処理を登録
         _commonStateManager = CommonStateManager.Instance;
-        _commonStateManager.AddOnChangeAction(ToMainScene);
+        _commonStateManager.AddOnChangeFunc(ToMainScene);
 
         //ローディング移行時の処理をStateManagerに代入===============
 

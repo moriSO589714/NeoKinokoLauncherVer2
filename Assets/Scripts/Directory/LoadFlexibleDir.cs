@@ -15,7 +15,7 @@ public class LoadFlexibleDir
         //パスが記載されたjsonファイルのパスを取得する
         string jsonFilePath = new AllDirs().DefinedDataPath;
         //jsonデータを読み取って代入
-        flexibleDirs = new JSONTools().ReadJSON<FlexibleDirs>(jsonFilePath);
+        flexibleDirs = JSONTools.ReadJSON<FlexibleDirs>(jsonFilePath);
 
         //typeof演算子を使い、System.Type(型情報)としてクラスを取得、GetFields()でフィールドを取得する。
         PropertyInfo[] props = typeof(FlexibleDirs).GetProperties();

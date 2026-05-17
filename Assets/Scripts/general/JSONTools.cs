@@ -6,14 +6,14 @@ using UnityEngine;
 /// <summary>
 /// JSON関係の汎用的な処理をまとめたクラス
 /// </summary>
-public class JSONTools
+public static class JSONTools
 {
     /// <summary>
     /// jsonデータを読み取って任意の型に代入する
     /// </summary>
     /// <param name="jsonFilePath"></param>
     /// <returns></returns>
-    public T ReadJSON<T>(string jsonFilePath)
+    public static T ReadJSON<T>(string jsonFilePath)
     {
         string stringDataByJSON = "";
 
@@ -41,5 +41,15 @@ public class JSONTools
         var inDataClass = JsonUtility.FromJson<T>(stringDataByJSON);
 
         return inDataClass;
+    }
+
+    /// <summary>
+    /// 任意の型からjsonファイルを作成するジェネリッククラス
+    /// </summary>
+    public static void SerializeJson<T>(T serializedClass, string savePath)
+    {
+        string json = JsonUtility.ToJson(serializedClass);
+        //文字列形式で保存されたjsonをファイルとして出力する
+        File.WriteAllText(savePath, json);
     }
 }
