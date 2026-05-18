@@ -1,9 +1,11 @@
 ﻿using Cysharp.Threading.Tasks;
 using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 
 public class GameDLProc
 {
@@ -21,7 +23,6 @@ public class GameDLProc
     /// </summary>
     public void DLGame(GameData gamedata)
     {
-        DirectoryActs directoryActs = new DirectoryActs();
         string gameId = gamedata.GameID;
         string driveId = gamedata.GameDriveId;
         AllDirs allDirs = AllDirs.GetInstance();
@@ -31,32 +32,44 @@ public class GameDLProc
         {
             throw new System.Exception("既にダウンロードフォルダに同じIDのゲームが保存されています。削除し、再度実行してください。ID >>>" + gameId);
         }
-        //既に途中までダウンロードしていないかを確認する処理
 
         //保存用一時ディレクトリの作成
+        DirectoryActs directoryActs = new DirectoryActs();
         string tempDirPath = AllDirs.GetInstance().TempPath;
         directoryActs.CreateAndCheckDir(tempDirPath);
         string tempGameDLPath = Path.Combine(tempDirPath, gameId);
         string tempSlicedGameDLPath = Path.Combine(tempGameDLPath, "sliced");
         directoryActs.CreateAndCheckDir(tempSlicedGameDLPath);
 
-        //メタデータを取得してくる
-        Dictionary<string, string> metaDic = _onNetDriveMetaData.GetFileList(driveId);
-
-        Dictionary<string, string> dlDataFileNameAndDriveId = metaDic.Where(x => x.Key.EndsWith(".000")).ToDictionary(x => x.Key, x => x.Value);
-        //.000ファイルの数が不正な場合
-        if (dlDataFileNameAndDriveId == null || dlDataFileNameAndDriveId.Count == 0 || dlDataFileNameAndDriveId.Count > 1)
+        MistakeFiles mistakeFiles = null;
+        //前回同じゲームIDのゲームを保存したことがある場合、不足しているファイルの番号を取得する
+        try
         {
-            throw new System.Exception("ドライブへの接続に失敗しました。ドライブにフォルダが存在しないか、ドライブにある'.00'形式のファイル数が不正です");
+            mistakeFiles = new FreezingTools().hasAllRequiredData(tempSlicedGameDLPath);
         }
-        string dlDataFileName = dlDataFileNameAndDriveId.Keys.First();
-        string dlDataDriveId = dlDataFileNameAndDriveId.Values.First();
-        //.000ファイル(DLDataが書かれたファイル)をダウンロードする
-        _onNetDriveFetFile.GetFile(dlDataDriveId, dlDataFileName, tempSlicedGameDLPath);
+        catch(Exception e)
+        {
+            //エラーが帰ってきた場合、フォルダを削除して再生成する
+            RefleshDir(tempSlicedGameDLPath);
+        }
 
-        //.000ファイルからインストールするゲームの情報を取得
-        DLData gameDLData = new DLData();
-        gameDLData.DeserializeDataByFilePath(Path.Combine(tempSlicedGameDLPath, dlDataFileName));
+        //ドライブからメタデータを取得してくる
+        Dictionary<string, string> metaDic = _onNetDriveMetaData.GetFileList(driveId);
+        DLData gameDLData = GetDLDataFromDrive(metaDic, tempSlicedGameDLPath);
+
+        //前回ダウンロードした際と全体の容量が変わっている場合は、アップデートが入ったとみなし、全てダウンロードし直す
+        if(mistakeFiles != null)
+        {
+            DLData oldGameDLData = new DLData(tempSlicedGameDLPath);
+            if(CheckUpdated(oldGameDLData, gameDLData, tempSlicedGameDLPath))
+            {
+                //アップデートが存在する
+            }
+            else
+            {
+                //アップデートが存在しない(途中からのDLを行う)
+            }
+        }
 
         //ダウンロードするファイルの数を取得
         long maxDLfiles = gameDLData.SplitedFileNum;
@@ -85,5 +98,66 @@ public class GameDLProc
 
         //ダウンロードに利用した一時保存関係のファイル・フォルダを全て削除する
         new DirectoryActs().CompleteDirDelete(tempGameDLPath);
+    }
+
+    //指定のディレクトリを完全に削除して作り直す処理
+    private void RefleshDir(string path)
+    {
+        DirectoryActs directoryActs = new DirectoryActs();
+        directoryActs.CompleteDirDelete(path);
+        directoryActs.CreateAndCheckDir(path);
+    }
+
+    //既に前回ダウンロード途中の後がある際に、前回から現在まででアップデートが行われたかを確認し、行われていたならディレクトリを削除する
+    private bool CheckUpdated(DLData oldData, DLData newData, string path)
+    {
+        //ファイル容量もしくは、GameIDが異なる
+        if(!isSameDataSize(oldData, newData))
+        {
+            RefleshDir(path);
+            return true;
+        }
+        return false;
+    }
+
+    private bool isSameDataSize(DLData oldData, DLData newData)
+    {
+        if(oldData.GameSize != newData.GameSize || oldData.FileName != newData.FileName)
+        {
+            return false;
+        }
+        return true;
+
+    }
+
+    private Dictionary<string,string> CreateLackDic(MistakeFiles mistakeFiles, Dictionary<string, string> metaDic, string fileName)
+    {
+        //不足しているファイルをlong型のリストからstring型のファイル名に変更する
+        //List<string> lackStrList = mistakeFiles.LackFiles.Select(x => )
+        //Dictionary<string, string> LackDic = metaDic.Where(x => mistakeFiles.LackFiles.Contains(Path.GetExtension(x.Key))).
+        return null;
+    }
+
+    /// <summary>
+    /// DLData(.000)のファイルをドライブから取得するための処理
+    /// </summary>
+    private DLData GetDLDataFromDrive(Dictionary<string, string> metaDic, string tempSlicedGameDLPath)
+    {
+        Dictionary<string, string> dlDataFileNameAndDriveId = metaDic.Where(x => x.Key.EndsWith(".000")).ToDictionary(x => x.Key, x => x.Value);
+        //.000ファイルの数が不正な場合
+        if (dlDataFileNameAndDriveId == null || dlDataFileNameAndDriveId.Count == 0 || dlDataFileNameAndDriveId.Count > 1)
+        {
+            throw new System.Exception("ドライブへの接続に失敗しました。ドライブにフォルダが存在しないか、ドライブにある'.00'形式のファイル数が不正です");
+        }
+        string dlDataFileName = dlDataFileNameAndDriveId.Keys.First();
+        string dlDataDriveId = dlDataFileNameAndDriveId.Values.First();
+        //.000ファイル(DLDataが書かれたファイル)をダウンロードする
+        _onNetDriveFetFile.GetFile(dlDataDriveId, dlDataFileName, tempSlicedGameDLPath);
+
+        //.000ファイルからインストールするゲームの情報を取得
+        DLData gameDLData = new DLData();
+        gameDLData.DeserializeDataByFilePath(Path.Combine(tempSlicedGameDLPath, dlDataFileName));
+
+        return gameDLData;
     }
 }

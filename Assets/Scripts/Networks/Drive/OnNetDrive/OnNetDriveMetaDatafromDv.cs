@@ -13,6 +13,7 @@ public class OnNetDriveMetaDatafromDv : OnNetDriveMetaData
     /// <summary>
     /// 特定のドライブフォルダ下にあるファイルのidと名前を取得する
     /// </summary>
+    /// <returns>(ファイル名, ドライブID)のディクショナリ</returns>
     public Dictionary<string, string> GetFileList(string driveFolderId)
     {
         //リクエストの作成
